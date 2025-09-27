@@ -17,7 +17,7 @@ if ckpt_manager.latest_checkpoint:
 else:
     print("No checkpoint found - evaluation will proceed with untrained generator (likely poor results).")
 
-_, _, test_ds = build_datasets()
+_, _, test_ds = build_datasets(img_size=Config.IMG_SIZE, channels=Config.CHANNELS)
 if test_ds is None:
     raise RuntimeError("No test dataset. Run preprocess.py and ensure processed data exists.")
 
