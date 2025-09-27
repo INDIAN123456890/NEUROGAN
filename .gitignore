@@ -1,0 +1,11 @@
+# Data and Results
+data/raw/
+data/processed/
+results/checkpoints/
+
+# Environment and Logs
+__pycache__/
+*.pyc
+venv/
+.ipynb_checkpoints/
+# synthetic_mri_gan/  # If environment created inside project folder
