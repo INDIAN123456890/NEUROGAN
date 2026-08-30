@@ -1,59 +1,271 @@
-# 🧠 Synthetic MRI Generator (Pix2Pix GAN)
+# 🧠 NEUROGAN
 
-This is my implementation of a **Pix2Pix Conditional GAN** for image-to-image translation, specifically focusing on synthesizing **T1ce-weighted MRI scans** from **T2-weighted MRI scans**.
+### MRI-to-MRI Image Translation using Pix2Pix Conditional GAN
 
-The goal is to generate realistic T1ce images given T2 inputs, using a U-Net Generator and a PatchGAN Discriminator.
+**NEUROGAN** is a deep learning project that generates **T1ce-weighted MRI images from T2-weighted MRI images** using a **Pix2Pix Conditional GAN**.
 
------
+The project uses a **U-Net Generator** and **PatchGAN Discriminator** to learn the mapping between paired MRI modalities. It includes data preprocessing, GAN training, checkpointing, sample generation, and quantitative evaluation using **PSNR and SSIM**.
 
-## 🛠️ Setup and Installation
+> ⚠️ **Disclaimer:** This project is intended for educational and research purposes only. Generated MRI images must not be used for clinical diagnosis or medical decision-making.
 
-I manage all project dependencies using the provided `environment.yml` file.
+---
 
-1.  **Create the Environment:**
-    ```bash
-    conda env create -f environment.yml
-    ```
-2.  **Activate the Environment:**
-    ```bash
-    conda activate synthetic_mri_gan
-    ```
-3.  **Verify Setup (Optional):**
-    I can run `jupyter notebook` and use the `01_data_exploration.ipynb` file to verify the data loading and preprocessing steps.
+## ✨ Features
 
------
+* 🧠 Pix2Pix Conditional GAN for MRI-to-MRI translation
+* 🔄 T2 MRI → Synthetic T1ce MRI generation
+* 🏗️ U-Net based Generator
+* 🔍 PatchGAN Discriminator
+* 🧹 NIfTI MRI preprocessing and slice extraction
+* 💾 Model checkpointing and training resumption
+* 🖼️ Generated image samples
+* 📊 PSNR and SSIM evaluation
+* ⚡ GPU availability checking
+* 🚀 Automated preprocessing and training pipeline
 
-## 💾 Data Flow
+---
 
-My pipeline expects raw NIfTI data and converts it into optimized NumPy slices for TensorFlow.
+## 🏗️ Architecture
 
-1.  **Place Data:** I place my raw MRI subject folders (containing T2 and T1ce files) into the `data/raw/` directory.
-2.  **Preprocess:** I run the dedicated script to process, normalize, and split the data.
-    ```bash
-    python src/preprocess.py
-    ```
-    *Result:* Processed slices are saved to `data/processed/`.
+```text
+             T2 MRI
+                │
+                ▼
+        ┌───────────────┐
+        │ U-Net         │
+        │ Generator     │
+        └───────┬───────┘
+                │
+                ▼
+        Synthetic T1ce
+                │
+       ┌────────┴────────┐
+       │                 │
+       ▼                 ▼
+   Real T1ce       Generated T1ce
+       │                 │
+       └────────┬────────┘
+                ▼
+        PatchGAN Discriminator
+                │
+                ▼
+            Real / Fake
+```
 
------
+The **Generator** learns to translate T2 MRI images into T1ce-like images while preserving important spatial information.
 
-## 🏃 Training and Resumption
+The **PatchGAN Discriminator** evaluates local image regions to encourage realistic textures and structures.
 
-I use the `run_train.sh` script to manage my training pipeline.
+---
 
-| Command | Purpose |
-| :--- | :--- |
-| `bash run_train.sh` | Starts preprocessing, then launches training (`src/train.py`). |
-| **Resumption** | **If I stop training,** simply rerunning `bash run_train.sh` automatically loads the latest checkpoint (`ckpt-N`) and resumes training from the correct epoch. |
-| **Results** | Generated sample images are saved to `results/samples/`. |
+## 📂 Project Structure
 
------
+```text
+NEUROGAN/
+│
+├── data/
+│   ├── raw/
+│   │   └── Raw MRI / NIfTI files
+│   │
+│   └── processed/
+│       └── Processed MRI files / slices
+│
+├── notebooks/
+│   └── 01_data_exploration.ipynb
+│
+├── results/
+│   └── samples/
+│       └── Generated MRI samples
+│
+├── src/
+│   ├── preprocess.py
+│   ├── train.py
+│   └── evaluate.py
+│
+├── .gitignore
+├── environment.yml
+├── gpu_checker.py
+├── run_train.sh
+└── README.md
+```
 
-## ✅ Evaluation
+### Main Components
 
-To assess the quality of the final synthesized T1ce images, I run the dedicated evaluation script.
+| Component           | Purpose                      |
+| ------------------- | ---------------------------- |
+| `data/raw/`         | Raw MRI/NIfTI dataset        |
+| `data/processed/`   | Preprocessed MRI data        |
+| `notebooks/`        | Dataset exploration          |
+| `src/preprocess.py` | Data preprocessing           |
+| `src/train.py`      | GAN training                 |
+| `src/evaluate.py`   | Model evaluation             |
+| `results/samples/`  | Generated MRI samples        |
+| `gpu_checker.py`    | GPU availability check       |
+| `run_train.sh`      | Training pipeline automation |
+| `environment.yml`   | Project dependencies         |
+
+---
+
+## ⚙️ Tech Stack
+
+* **Python**
+* **TensorFlow**
+* **NumPy**
+* **Jupyter Notebook**
+* **Conda**
+* **NIfTI**
+* **CUDA/GPU**
+* **Bash**
+
+### Deep Learning
+
+* Conditional GAN
+* Pix2Pix
+* U-Net
+* PatchGAN
+* Convolutional Neural Networks
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/INDIAN123456890/NEUROGAN.git
+cd NEUROGAN
+```
+
+### 2. Create Environment
+
+```bash
+conda env create -f environment.yml
+conda activate synthetic_mri_gan
+```
+
+### 3. Check GPU
+
+```bash
+python gpu_checker.py
+```
+
+### 4. Preprocess Data
+
+Place the raw MRI data inside:
+
+```text
+data/raw/
+```
+
+Then run:
+
+```bash
+python src/preprocess.py
+```
+
+Processed files will be generated inside:
+
+```text
+data/processed/
+```
+
+### 5. Train the Model
+
+```bash
+bash run_train.sh
+```
+
+Or directly:
+
+```bash
+python src/train.py
+```
+
+### 6. Evaluate
 
 ```bash
 python src/evaluate.py
 ```
 
-This script loads the best saved model and calculates standard image quality metrics (PSNR and SSIM) on the held-out test set.
+Generated samples are stored in:
+
+```text
+results/samples/
+```
+
+---
+
+## 📊 Evaluation
+
+The generated MRI images are evaluated using:
+
+| Metric   | Purpose                                     |
+| -------- | ------------------------------------------- |
+| **PSNR** | Measures pixel-level reconstruction quality |
+| **SSIM** | Measures structural similarity              |
+
+Both metrics are used alongside visual inspection to assess the generated images.
+
+---
+
+## 🔄 Training Pipeline
+
+```text
+Raw NIfTI MRI
+      ↓
+Preprocessing
+      ↓
+Paired T2 + T1ce Dataset
+      ↓
+Pix2Pix GAN Training
+      ↓
+Checkpoint Saving
+      ↓
+Synthetic T1ce Generation
+      ↓
+PSNR + SSIM Evaluation
+```
+
+---
+
+## ⚠️ Limitations
+
+* GAN training can be computationally intensive and unstable.
+* Generated images may contain artifacts.
+* Results depend heavily on dataset quality and modality alignment.
+* PSNR and SSIM alone cannot determine clinical usefulness.
+* Synthetic MRI images should not replace actual clinical MRI scans.
+
+---
+
+## 🔮 Future Improvements
+
+* 3D MRI GAN architecture
+* Attention-based U-Net
+* Improved GAN loss functions
+* Multi-modal MRI translation
+* Diffusion-based image synthesis
+* Additional perceptual evaluation metrics
+* Experiment tracking and hyperparameter optimization
+
+---
+
+## 👨‍💻 Author
+
+**Sahil Salunke**
+
+B.E. CSE (Data Science)
+
+Interested in **Data Engineering, Data Science, Machine Learning, Deep Learning, Generative AI, and Computer Vision**.
+
+---
+
+## ⭐ Support
+
+If you find **NEUROGAN** useful or interesting, consider giving the repository a ⭐ on GitHub.
+
+**Live Neurogan Website:**
+https://neurogan-puce.vercel.app/
+
+**Repository:**
+https://github.com/INDIAN123456890/NEUROGAN
